@@ -29,13 +29,21 @@ namespace Our.Umbraco.SiteDomainMapperConfig
 		/// <inheritdoc/>
 		public void Initialize()
 		{
-			if (_domainMapperOptions.Sites != null)
-			{
-				foreach (var site in _domainMapperOptions.Sites)
-				{
-					_siteDomainMapper?.AddSite(site.SiteName, site.Domains);
-					_logger.LogInformation("SiteDomainMapper added site {SiteName} with {Domains} domains", site.SiteName, string.Join(", ", site.Domains));
-				}
+            if (_domainMapperOptions.Sites != null)
+            {
+                foreach (var site in _domainMapperOptions.Sites)
+                {
+                    _siteDomainMapper?.AddSite(site.SiteName, site.Domains);
+                    _logger.LogInformation("SiteDomainMapper added site {SiteName} with {Domains} domains", site.SiteName, string.Join(", ", site.Domains));
+                }
+            }
+            if (_domainMapperOptions.Bindings != null)
+            { 
+                foreach (var binding in _domainMapperOptions.Bindings)
+                {
+                    _siteDomainMapper?.BindSites(binding.SiteNames);
+                    _logger.LogInformation("SiteDomainMapper added binding with {SiteNames} sites", string.Join(", ", binding.SiteNames));
+                }
 			}
 		}
 
@@ -49,8 +57,21 @@ namespace Our.Umbraco.SiteDomainMapperConfig
         public void Compose(IUmbracoBuilder builder)
         {
             var domainMapperSection = builder.Config.GetSection("DomainMapper");
-            var sites = builder.Config.GetSection("DomainMapper").Get<List<Site>>();
-            builder.Services.Configure<DomainMapperOptions>(options => options.Sites = sites);
+            var sites = domainMapperSection.GetSection("Sites").Get<List<Site>>();
+
+            var bindings = domainMapperSection.GetSection("Bindings").Get<string[][]>();
+
+            var bindingsList = new List<Binding>();
+            foreach (var binding in bindings)
+            {
+                var bindingItem = new Binding { SiteNames = binding };
+                bindingsList.Add(bindingItem);
+            }
+
+            builder.Services.Configure<DomainMapperOptions>(options => {
+                options.Sites = sites;
+                options.Bindings = bindingsList;
+            });
 
             builder.Components().Append<SiteDomainMapperComponent>();
         }
