@@ -1,0 +1,21 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <OurUmbracoSiteDomainMapperConfigContentFilesPath>$(MSBuildThisFileDirectory)..\App_Plugins\Our.Umbraco.SiteDomainMapperConfig\**\*.*</OurUmbracoSiteDomainMapperConfigContentFilesPath>
+    </PropertyGroup>
+
+    <Target Name="CopyOurUmbracoSiteDomainMapperConfigAssets" BeforeTargets="Build">
+        <ItemGroup>
+            <OurUmbracoSiteDomainMapperConfigContentFiles Include="$(OurUmbracoSiteDomainMapperConfigContentFilesPath)" />
+        </ItemGroup>
+        <Message Text="Copying Our.Umbraco.SiteDomainMapperConfig files: $(OurUmbracoSiteDomainMapperConfigContentFilesPath) - #@(OurUmbracoSiteDomainMapperConfigContentFiles->Count()) files" Importance="high" />
+        <Copy SourceFiles="@(OurUmbracoSiteDomainMapperConfigContentFiles)" DestinationFiles="@(OurUmbracoSiteDomainMapperConfigContentFiles->'$(MSBuildProjectDirectory)\App_Plugins\Our.Umbraco.SiteDomainMapperConfig\%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    </Target>
+    
+    <Target Name="ClearOurUmbracoSiteDomainMapperConfigAssets" BeforeTargets="Clean">
+        <ItemGroup>
+            <OurUmbracoSiteDomainMapperConfigDir Include="$(MSBuildProjectDirectory)\App_Plugins\Our.Umbraco.SiteDomainMapperConfig\" />
+        </ItemGroup>
+        <Message Text="Clear old Our.Umbraco.SiteDomainMapperConfig data" Importance="high" />
+        <RemoveDir Directories="@(OurUmbracoSiteDomainMapperConfigDir)" />
+    </Target>
+</Project>
