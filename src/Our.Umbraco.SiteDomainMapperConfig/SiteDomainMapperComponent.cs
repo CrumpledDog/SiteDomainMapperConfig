@@ -1,7 +1,11 @@
-﻿using Microsoft.Extensions.Options;
+﻿using System.Collections.Generic;
+using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Umbraco.Cms.Core.DependencyInjection;
 using Umbraco.Cms.Core.Composing;
 using Umbraco.Cms.Core.Routing;
-using Microsoft.Extensions.Logging;
 
 namespace Our.Umbraco.SiteDomainMapperConfig
 {
@@ -40,6 +44,15 @@ namespace Our.Umbraco.SiteDomainMapperConfig
 		{ }
 	}
 
-	public class SiteDomainMapperComponentComposer : ComponentComposer<SiteDomainMapperComponent>
-	{ }
+    public class SiteDomainMapperComponentComposer : IComposer
+    {
+        public void Compose(IUmbracoBuilder builder)
+        {
+            var domainMapperSection = builder.Config.GetSection("DomainMapper");
+            var sites = builder.Config.GetSection("DomainMapper").Get<List<Site>>();
+            builder.Services.Configure<DomainMapperOptions>(options => options.Sites = sites);
+
+            builder.Components().Append<SiteDomainMapperComponent>();
+        }
+    }
 }
