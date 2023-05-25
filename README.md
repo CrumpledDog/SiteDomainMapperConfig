@@ -2,7 +2,7 @@
 
 This package makes it possible to configure the Umbraco SiteDomainMapper from appsettings.json instead of in code.
 
-See [here](https://our.umbraco.com/Documentation/Reference/Routing/Request-Pipeline/outbound-pipeline#default-sitedomainmapper) for info on what the SiteDomainMapper is used for.
+See [here](https://docs.umbraco.com/umbraco-cms/reference/routing/request-pipeline/outbound-pipeline#site-domain-mapper) for info on what the SiteDomainMapper is used for.
 
 ## Configuration ##
 
